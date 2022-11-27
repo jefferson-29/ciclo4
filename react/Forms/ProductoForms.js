@@ -3,34 +3,34 @@ import * as productosServer from '../productos/productosServer';
 import { useHistory, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
-const TipoForms =()=>{
+const ProductoForms =()=>{
     const history = useHistory();
     const params = useParams();
 
     console.log(params);
 
-    const initialState = {id_tipo:0, name:""};
+    const initialState = {id_producto:0, nombre:""};
 
-    const [Tipo, setTipos] = useState(initialState);
+    const [Producto, setProductos] = useState(initialState);
 
     const handleInputChange=(e)=>{
     //console.log(e.target.tipo);
     //console.log(e.target.value);
-    setTipos({ ...Tipo, [e.target.name]: e.target.value });
+    setTipos({ ...Producto, [e.target.nombre]: e.target.value });
 };
 
 const handleSubmit = async (e) =>{
     e.preventDefault();
     try {
         let res;
-        if(!params.id_tipo){
-            res = await productosServer.registerType(Tipo);
+        if(!params.id_producto){
+            res = await productosServer.registerProductos(Producto);
         const data = await res.json();
             if(data.message === "Econtrado"){
-                setTipos(initialState);
+                setProductos(initialState);
             }
         }else{
-            await productosServer.updateType(params.id_tipo, Tipo);
+            await productosServer.updateProductos(params.id_producto, Producto);
         }        
         history.push("/");
         //console.log(data);
@@ -39,12 +39,12 @@ const handleSubmit = async (e) =>{
     }
 };
 
-const getTipo = async(id_tipo)=>{
+const getProducto = async(id_producto)=>{
     try {
-        const res = await productosServer.getTipo(id_tipo);
+        const res = await productosServer.getProductos(id_producto);
         const data = await res.json();
-        const {name} = data.Tipos;
-        setTipos({ name });
+        const {nombre} = data.Productos;
+        setProductos({ nombre });
         console.log(data);
     } catch (error) {
         console.log(error);
@@ -53,18 +53,18 @@ const getTipo = async(id_tipo)=>{
 };
 
 useEffect(() =>{
-    if(params.id_tipo){
-        getTipo(params.id_tipo);
+    if(params.id_producto){
+        getProducto(params.id_producto);
     }
 }, []);
 
     return(
         <div className = "row">
-            <h2 className="mb-3 text-center">Formulario Tipo</h2>
+            <h2 className="mb-3 text-center">Formulario Producto</h2>
         <form onSubmit={handleSubmit}>
             <div className="mb-3">
-                <center><label id="txtTipo" className="form-label">Tipo</label></center>
-                <input type="text" name = "name" value = {Tipo.name} onChange = {handleInputChange} className="form-control" />
+                <center><label id="txtTipo" className="form-label">Producto</label></center>
+                <input type="text" name = "nombre" value = {Producto.nombre} onChange = {handleInputChange} className="form-control" />
             </div>
             {
                 params.id_tipo?(
@@ -80,4 +80,4 @@ useEffect(() =>{
     )
 };
 
-export default TipoForms;
+export default ProductoForms;
